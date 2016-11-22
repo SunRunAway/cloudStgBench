@@ -2,10 +2,9 @@ package mock
 
 import (
 	"io"
+	"strconv"
 	"sync"
 	"time"
-	"github.com/SunRunAway/cloudStgBench/storage"
-	"strconv"
 )
 
 type MockStg struct{}
@@ -17,14 +16,14 @@ func (self MockStg) Put(r io.Reader, size int64) (fileName string, err error) {
 
 func (self MockStg) InitFileList(n int, size int64) (fileList []string, err error) {
 	fileList = make([]string, n)
-	for i := range fileList{
+	for i := range fileList {
 		fileList[i] = strconv.FormatInt(size, 10)
 	}
 	return
 }
 
 func (self MockStg) Get(fileName string) (io.Reader, error) {
-	size, err := strconv.ParseInt(fileName, 10 , 64)
+	size, err := strconv.ParseInt(fileName, 10, 64)
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +42,6 @@ func (tr *timeReader) Read(p []byte) (int, error) {
 	return len(p), nil
 }
 
-func init() {
-	storage.RegisterStorage("mock", MockStg{})
-}
+// func init() {
+// 	storage.RegisterStorage("mock", MockStg{})
+// }
