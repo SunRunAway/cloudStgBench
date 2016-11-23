@@ -8,12 +8,15 @@ import (
 	"log"
 	"sync/atomic"
 	"time"
+
+	"github.com/SunRunAway/cloudStgBench/lib"
 	"github.com/SunRunAway/cloudStgBench/storage"
+	_ "github.com/SunRunAway/cloudStgBench/storage/aws"
 	_ "github.com/SunRunAway/cloudStgBench/storage/mock"
 )
 
 var smallSize = flag.Int64("ssize", 4*1024, "small size to test iops")
-var concurrent = flag.Int("c", 400, "concurrent to test iops")
+var concurrent = flag.Int("c", 20, "concurrent to test iops")
 var duration = flag.Int("s", 10, "iops duration in second")
 var largeSize = flag.Int64("lsize", 100*1024*1024, "large size to test speed")
 
@@ -24,7 +27,7 @@ func main() {
 
 		fmt.Println("-----put iops-----")
 		testIops(func() (n int64, err error) {
-			_, err = stg.Put(newReader(*smallSize), *smallSize)
+			_, err = stg.Put(lib.NewReader(*smallSize), *smallSize)
 			if err != nil {
 				return 0, err
 			}
@@ -51,7 +54,7 @@ func main() {
 		var fileName string
 		fmt.Println("-----put speed-----")
 		testSpeed(func() (n int64, err error) {
-			fileName, err = stg.Put(newReader(*largeSize), *largeSize)
+			fileName, err = stg.Put(lib.NewReader(*largeSize), *largeSize)
 			if err != nil {
 				return 0, err
 			}
@@ -74,17 +77,6 @@ func main() {
 
 		fmt.Printf("==================> end testing %v\n", name)
 	}
-}
-
-type emptyReader struct {
-}
-
-func (r *emptyReader) Read(p []byte) (n int, err error) {
-	return len(p), nil
-}
-
-func newReader(size int64) io.Reader {
-	return io.LimitReader(&emptyReader{}, size)
 }
 
 func testIops(invoke func() (n int64, err error)) {
@@ -119,7 +111,7 @@ func testIops(invoke func() (n int64, err error)) {
 		}
 	}()
 
-	t := time.NewTicker( time.Second)
+	t := time.NewTicker(time.Second)
 	i := 0
 	for {
 		select {
