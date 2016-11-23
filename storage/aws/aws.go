@@ -93,6 +93,7 @@ func init() {
 	sess, err := session.NewSession(&aws.Config{
 		DisableSSL:              aws.Bool(true),
 		DisableComputeChecksums: aws.Bool(true),
+		Endpoint:                aws.String(os.Getenv("AWS_CONFIG_ENDPOINT")),
 		HTTPClient: &http.Client{
 			Transport: &http.Transport{
 				Proxy: http.ProxyFromEnvironment,
