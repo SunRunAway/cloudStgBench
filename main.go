@@ -11,6 +11,7 @@ import (
 
 	"github.com/SunRunAway/cloudStgBench/lib"
 	"github.com/SunRunAway/cloudStgBench/storage"
+
 	_ "github.com/SunRunAway/cloudStgBench/storage/aws"
 	_ "github.com/SunRunAway/cloudStgBench/storage/mock"
 )
@@ -43,11 +44,12 @@ func main() {
 		fmt.Println("-----get iops-----")
 		testIops(func() (n int64, err error) {
 			fileName := fileList[atomic.AddUint32(&index, 1)%uint32(len(fileList))]
-			r, err := stg.Get(fileName)
+			rc, err := stg.Get(fileName)
 			if err != nil {
 				return 0, err
 			}
-			return io.Copy(ioutil.Discard, r)
+			defer rc.Close()
+			return io.Copy(ioutil.Discard, rc)
 		})
 		fmt.Println("-----done-----")
 
@@ -67,11 +69,12 @@ func main() {
 
 		fmt.Println("-----get speed-----")
 		testSpeed(func() (n int64, err error) {
-			r, err := stg.Get(fileName)
+			rc, err := stg.Get(fileName)
 			if err != nil {
 				return 0, err
 			}
-			return io.Copy(ioutil.Discard, r)
+			defer rc.Close()
+			return io.Copy(ioutil.Discard, rc)
 		})
 		fmt.Println("-----done-----")
 

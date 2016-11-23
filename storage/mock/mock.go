@@ -2,9 +2,12 @@ package mock
 
 import (
 	"io"
+	"io/ioutil"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/SunRunAway/cloudStgBench/storage"
 )
 
 type MockStg struct{}
@@ -22,12 +25,12 @@ func (self MockStg) InitFileList(n int, size int64) (fileList []string, err erro
 	return
 }
 
-func (self MockStg) Get(fileName string) (io.Reader, error) {
+func (self MockStg) Get(fileName string) (io.ReadCloser, error) {
 	size, err := strconv.ParseInt(fileName, 10, 64)
 	if err != nil {
 		return nil, err
 	}
-	return io.LimitReader(&timeReader{dur: 0.1e9}, size), nil
+	return ioutil.NopCloser(io.LimitReader(&timeReader{dur: 0.1e9}, size)), nil
 }
 
 type timeReader struct {
@@ -42,6 +45,7 @@ func (tr *timeReader) Read(p []byte) (int, error) {
 	return len(p), nil
 }
 
-// func init() {
-// 	storage.RegisterStorage("mock", MockStg{})
-// }
+func init() {
+	_ = storage.RegisterStorage
+	//storage.RegisterStorage("mock", MockStg{})
+}
