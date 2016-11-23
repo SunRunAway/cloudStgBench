@@ -144,5 +144,5 @@ func testSpeed(invoke func() (n int64, err error)) {
 		fmt.Printf("testSpeed error: %v\n", err)
 		return
 	}
-	fmt.Printf("testSpeed length: %v, cost: %v, speed: %v MB/s", n, dur, float64(n/1024/1024)/(float64(dur)/float64(time.Second)))
+	fmt.Printf("testSpeed length: %v, cost: %v, speed: %v MB/s\n", n, dur, float64(n/1024/1024)/(float64(dur)/float64(time.Second)))
 }
