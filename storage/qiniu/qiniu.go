@@ -69,7 +69,7 @@ func (self QStg) Get(fileName string) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	req.Header.Add("Host", bucketDomain)
+	req.Host = bucketDomain
 
 	resp, err := self.client.Do(req)
 	if err != nil {
