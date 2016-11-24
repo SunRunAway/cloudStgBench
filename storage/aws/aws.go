@@ -83,6 +83,7 @@ func (self AWSStg) upload(filename string, r io.Reader, size int64) (ret string,
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	}
+
 	if _, err = self.S3.PutObject(&input); err != nil {
 		return "", err
 	}
@@ -94,6 +95,7 @@ func init() {
 		DisableSSL:              aws.Bool(true),
 		DisableComputeChecksums: aws.Bool(true),
 		Endpoint:                aws.String(os.Getenv("AWS_CONFIG_ENDPOINT")),
+		S3ForcePathStyle:        aws.Bool(true),
 		HTTPClient: &http.Client{
 			Transport: &http.Transport{
 				Proxy: http.ProxyFromEnvironment,
