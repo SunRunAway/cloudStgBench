@@ -3,13 +3,10 @@ package aws
 import (
 	"fmt"
 	"io"
-	"net"
-	"net/http"
 	"os"
 	"strconv"
 	"sync"
 	"sync/atomic"
-	"time"
 
 	"github.com/SunRunAway/cloudStgBench/lib"
 	"github.com/SunRunAway/cloudStgBench/storage"
@@ -96,20 +93,7 @@ func init() {
 		DisableComputeChecksums: aws.Bool(true),
 		Endpoint:                aws.String(os.Getenv("AWS_CONFIG_ENDPOINT")),
 		S3ForcePathStyle:        aws.Bool(true),
-		HTTPClient: &http.Client{
-			Transport: &http.Transport{
-				Proxy: http.ProxyFromEnvironment,
-				DialContext: (&net.Dialer{
-					Timeout:   30 * time.Second,
-					KeepAlive: 30 * time.Second,
-				}).DialContext,
-				MaxIdleConns:          500,
-				MaxIdleConnsPerHost:   500,
-				IdleConnTimeout:       90 * time.Second,
-				TLSHandshakeTimeout:   10 * time.Second,
-				ExpectContinueTimeout: 1 * time.Second,
-			},
-		},
+		HTTPClient:              lib.NewClient(),
 	})
 	if err != nil {
 		fmt.Printf("Register aws storage failed: %#v", err)
