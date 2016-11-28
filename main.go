@@ -14,6 +14,7 @@ import (
 
 	_ "github.com/SunRunAway/cloudStgBench/storage/aws"
 	_ "github.com/SunRunAway/cloudStgBench/storage/mock"
+	_ "github.com/SunRunAway/cloudStgBench/storage/qiniu"
 )
 
 var smallSize = flag.Int64("ssize", 4*1024, "small size to test iops")
