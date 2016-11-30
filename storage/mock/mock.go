@@ -46,6 +46,5 @@ func (tr *timeReader) Read(p []byte) (int, error) {
 }
 
 func init() {
-	_ = storage.RegisterStorage
-	//storage.RegisterStorage("mock", MockStg{})
+	storage.RegisterStorage("mock", MockStg{})
 }

@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -21,12 +22,18 @@ var smallSize = flag.Int64("ssize", 4*1024, "small size to test iops")
 var concurrent = flag.Int("c", 20, "concurrent to test iops")
 var duration = flag.Int("s", 10, "iops duration in second")
 var largeSize = flag.Int64("lsize", 100*1024*1024, "large size to test speed")
+var onlyStg = flag.String("o", "", "run specific bench storage")
 
 func main() {
 	flag.Parse()
-	for name, stg := range storage.StgMap {
-		fmt.Printf("==================> start testing %v\n", name)
 
+	for name, stg := range storage.StgMap {
+
+		if *onlyStg != "" && !strings.Contains(*onlyStg, name) {
+			continue
+		}
+
+		fmt.Printf("==================> start testing %v\n", name)
 		fmt.Println("-----put iops-----")
 		testIops(func() (n int64, err error) {
 			_, err = stg.Put(lib.NewReader(*smallSize), *smallSize)
