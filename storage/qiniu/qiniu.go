@@ -15,6 +15,7 @@ import (
 	"golang.org/x/net/context"
 
 	"qiniupkg.com/api.v7/kodo"
+	"strings"
 )
 
 var (
@@ -98,6 +99,17 @@ func init() {
 
 	bucketDomain = os.Getenv("QINIU_BUCKET_DOMAIN")
 	endPoint = os.Getenv("QINIU_ENDPOINT")
+	if endPoint == "" {
+		endPoint = bucketDomain
+	}
+	if strings.HasPrefix(bucketDomain, "http://") {
+		bucketDomain = bucketDomain[len("http://"):]
+	} else if strings.HasPrefix(bucketDomain, "https://") {
+		bucketDomain = bucketDomain[len("https://"):]
+	}
+	if !strings.HasPrefix(endPoint, "http://") && !strings.HasPrefix(endPoint, "https://") {
+		endPoint = "http://" + endPoint
+	}
 
 	c := kodo.New(int(zone), nil)
 	bucket := c.Bucket(os.Getenv("QINIU_BUCKET"))
